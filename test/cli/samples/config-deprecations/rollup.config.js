@@ -10,31 +10,31 @@ module.exports = {
 	plugins: [
 		replace( { 'ANSWER': 42 } )
 	],
-	onwarn (warning) {
+	onwarn ( warning ) {
 		// this is called twice, 1st time from CLI and
 		// then again from rollup's main method.
 		// the tests are different because some deprecations are
 		// fixed the first time only
-		warnings.push(warning);
+		warnings.push( warning );
 
 		const deprecationTest = () => assert.deepEqual(
-			warnings[0].deprecations,
-			[{new: 'input', old: 'entry'}, {new: 'output.format', old: 'format'}]
+			warnings[ 0 ].deprecations,
+			[ { new: 'input', old: 'entry' }, { new: 'output.format', old: 'format' } ]
 		);
 
-		if (warnings.length === 1) {
+		if ( warnings.length === 1 ) {
 			deprecationTest();
-		} else if (warnings.length === 2) {
+		} else if ( warnings.length === 2 ) {
 			deprecationTest();
 			assert.deepEqual(
-				warnings[1],
+				warnings[ 1 ],
 				{
 					code: 'UNKNOWN_OPTION',
-					message: 'Unknown option found: abc. Allowed keys: input, legacy, treeshake, acorn, acornInjectPlugins, context, moduleContext, plugins, onwarn, watch, cache, preferConst, experimentalDynamicImport, experimentalCodeSplitting, preserveSymlinks, entry, external, extend, amd, banner, footer, intro, format, outro, sourcemap, sourcemapFile, name, globals, interop, legacy, freeze, indent, strict, noConflict, paths, exports, file, dir, pureExternalModules'
+					message: 'Unknown option found: abc. Allowed keys: acorn, acornInjectPlugins, cache, context, legacy, input, moduleContext, onwarn, plugins, preferConst, preserveSymlinks, treeshake, watch, experimentalCodeSplitting, experimentalDynamicImport, entry, external, amd, banner, dir, exports, extend, file, footer, format, freeze, globals, indent, interop, intro, legacy, name, noConflict, outro, paths, sourcemap, sourcemapFile, strict, pureExternalModules'
 				}
 			);
 		} else {
-			throw new Error('Unwanted warnings');
+			throw new Error( 'Unwanted warnings' );
 		}
 	}
 };
