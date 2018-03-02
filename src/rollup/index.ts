@@ -1,4 +1,4 @@
-import { timeStart, timeEnd, flushTime } from '../utils/flushTime';
+import { flushTimersForInput, flushTimersForOutput, initialiseTimers, timeEnd, timeStart } from '../utils/timers';
 import { basename } from '../utils/path';
 import { writeFile } from '../utils/fs';
 import { assign } from '../utils/object';
@@ -79,6 +79,7 @@ export interface InputOptions {
 	// undocumented?
 	pureExternalModules?: boolean;
 	preferConst?: boolean;
+	perf?: boolean;
 
 	// deprecated
 	entry?: string;
@@ -232,13 +233,15 @@ export default function rollup (rawInputOptions: GenericConfigObject) {
 		checkInputOptions(inputOptions);
 		const graph = new Graph(inputOptions);
 
-		timeStart('--BUILD--');
+		initialiseTimers(inputOptions.perf);
+		timeStart('# BUILD');
 
 		const codeSplitting = inputOptions.experimentalCodeSplitting && inputOptions.input instanceof Array;
 
 		if (!codeSplitting) return graph.buildSingle(inputOptions.input)
 			.then(chunk => {
-				timeEnd('--BUILD--');
+				timeEnd('# BUILD');
+				flushTimersForInput(inputOptions);
 
 				function normalizeOptions (rawOutputOptions: GenericConfigObject) {
 					if (!rawOutputOptions) {
@@ -271,12 +274,12 @@ export default function rollup (rawInputOptions: GenericConfigObject) {
 				function generate (rawOutputOptions: GenericConfigObject) {
 					const outputOptions = normalizeOptions(rawOutputOptions);
 
-					timeStart('--GENERATE--');
+					timeStart('# GENERATE');
 
 					const promise = Promise.resolve()
 						.then(() => chunk.render(outputOptions))
 						.then(rendered => {
-							timeEnd('--GENERATE--');
+							timeEnd('# GENERATE');
 
 							graph.plugins.forEach(plugin => {
 								if (plugin.ongenerate) {
@@ -292,8 +295,7 @@ export default function rollup (rawInputOptions: GenericConfigObject) {
 								}
 							});
 
-							flushTime();
-
+							flushTimersForOutput(outputOptions);
 							return rendered;
 						});
 
@@ -401,7 +403,7 @@ export default function rollup (rawInputOptions: GenericConfigObject) {
 						});
 					}
 
-					timeStart('--GENERATE--');
+					timeStart('# GENERATE');
 
 					const generated: { [chunkName: string]: SourceDescription } = {};
 
@@ -409,7 +411,7 @@ export default function rollup (rawInputOptions: GenericConfigObject) {
 						const chunk = bundle[chunkName];
 						return chunk.render(outputOptions)
 							.then(rendered => {
-								timeEnd('--GENERATE--');
+								timeEnd('# GENERATE');
 
 								graph.plugins.forEach(plugin => {
 									if (plugin.ongenerate) {
@@ -418,8 +420,7 @@ export default function rollup (rawInputOptions: GenericConfigObject) {
 									}
 								});
 
-								flushTime();
-
+								flushTimersForOutput(outputOptions);
 								generated[chunkName] = rendered;
 							});
 					}))

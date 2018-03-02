@@ -30,7 +30,7 @@ module.exports = {
 				warnings[ 1 ],
 				{
 					code: 'UNKNOWN_OPTION',
-					message: 'Unknown option found: abc. Allowed keys: acorn, acornInjectPlugins, cache, context, legacy, input, moduleContext, onwarn, plugins, preferConst, preserveSymlinks, treeshake, watch, experimentalCodeSplitting, experimentalDynamicImport, entry, external, amd, banner, dir, exports, extend, file, footer, format, freeze, globals, indent, interop, intro, legacy, name, noConflict, outro, paths, sourcemap, sourcemapFile, strict, pureExternalModules'
+					message: 'Unknown option found: abc. Allowed keys: acorn, acornInjectPlugins, cache, context, legacy, input, moduleContext, onwarn, perf, plugins, preferConst, preserveSymlinks, treeshake, watch, experimentalCodeSplitting, experimentalDynamicImport, entry, external, amd, banner, dir, exports, extend, file, footer, format, freeze, globals, indent, interop, intro, legacy, name, noConflict, outro, paths, sourcemap, sourcemapFile, strict, pureExternalModules'
 				}
 			);
 		} else {
